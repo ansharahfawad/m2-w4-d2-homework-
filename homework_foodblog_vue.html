@@ -78,7 +78,74 @@
             text-align: center;
             font-size: 0.85em;
         }
-    </style>
+    
+        .post-author {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .profile-image {
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid #c7cbd0;
+            background: #e7eaed;
+            margin-right: 6px;
+        }
+
+        .profile-image:focus {
+            outline: 2px solid rgb(60, 190, 160);
+            outline-offset: 2px;
+        }
+
+        .profile-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.28);
+        }
+
+        .profile-card {
+            position: relative;
+            width: min(360px, 100%);
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 26px;
+            color: #fff;
+            background: rgba(20, 20, 20, 0.94);
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            overflow-wrap: anywhere;
+        }
+
+        .profile-card h3 {
+            margin: 0 28px 18px 0;
+            font-size: 1.4em;
+        }
+
+        .profile-card p {
+            margin: 12px 0;
+            line-height: 1.5;
+        }
+
+        .profile-close {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            padding: 4px 9px;
+            border: 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+</style>
 
     
 
@@ -102,11 +169,26 @@
             <blog-post
                 v-for="post in posts"
                 :key="post.id"
-                :post="post">
+                :post="post"
+                :profile-placeholder="profilePlaceholder"
+                @show-author-info="showAuthorInfo">
             </blog-post>
         </section>
 
     </main>
+
+    <div
+        v-if="selectedAuthor"
+        class="profile-overlay"
+        @click.self="closeAuthorInfo"
+    >
+        <section class="profile-card" role="dialog" aria-modal="true" :aria-label="selectedAuthor.name + ' profile'">
+            <button class="profile-close" type="button" @click="closeAuthorInfo" aria-label="Close profile">×</button>
+            <h3>{{ selectedAuthor.name }}</h3>
+            <p><strong>Foodie Level:</strong> {{ selectedAuthor.foodieLevel }}</p>
+            <p><strong>Bio:</strong> {{ selectedAuthor.bio }}</p>
+        </section>
+    </div>
 
     <footer>
         &copy; Copyright FOOD BLOG
@@ -128,12 +210,23 @@
 
     // Reuse this component for each comment.
     Vue.component('blog-post', {
-        props: ['post'],
+        props: ['post', 'profilePlaceholder'],
         template: `
             <div class="post">
-                <span class="author">{{ post.author }}</span> —
-                <span class="date">{{ post.date }}</span>
-                <span class="reply">{{ post.reply }}</span>
+                <div class="post-author">
+                    <img
+                        class="profile-image"
+                        :src="profilePlaceholder"
+                        :alt="'View profile for ' + post.author"
+                        @click="$emit('show-author-info', post.author)"
+                        @keydown.enter="$emit('show-author-info', post.author)"
+                        tabindex="0"
+                        title="Click to view author profile"
+                    >
+                    <span class="author">{{ post.author }}</span> —
+                    <span class="date">{{ post.date }}</span>
+                    <span class="reply">{{ post.reply }}</span>
+                </div>
                 <p>{{ post.comment }}</p>
             </div>
         `
@@ -143,6 +236,9 @@
     new Vue({
         el: '#container',
         data: {
+            profilePlaceholder: 'images/profile-placeholder.png',
+            selectedAuthor: null,
+            authors: [{'name': 'Brianna', 'foodieLevel': 'Novice', 'bio': 'Food enthusiast. Love to cook and experiment. Into only organic, fat free, sugar free stuffs!'}, {'name': 'LINH', 'foodieLevel': 'Newcomer', 'bio': 'Love food! Grew up with meat and potatoes. Recently venture outside my comfort zone. Loving everything I have been eating so far. Thai is my favorite at this time.'}, {'name': 'CATHERINE LEONARDO', 'foodieLevel': 'Mentor', 'bio': 'I have to say I never was the adventurous type until 2 years ago. My boyfriend, who is of Japanese background, exposed me to other cultural food and I have never look back since!'}, {'name': 'KALI', 'foodieLevel': 'Novice', 'bio': "Food is my passion. So is cooking. I love to experiment and try new things. I have to admit I'm a food whore! Invite me over for dinner and I'll be there!"}],
             posts: [
                 {
                     id: 1,
@@ -173,6 +269,16 @@
                     comment: 'This recipe is dynamite! My partner usually won’t eat beans but he finished the whole pot (darn was hoping to have some for leftovers haha). This is crowd-pleaser that I am going to add to my regular recipe rotation. Thanks so much, Lisa!'
                 }
             ]
+        },
+        methods: {
+            showAuthorInfo(authorName) {
+                this.selectedAuthor = this.authors.find(
+                    author => author.name.toLowerCase() === authorName.toLowerCase()
+                ) || null;
+            },
+            closeAuthorInfo() {
+                this.selectedAuthor = null;
+            }
         }
     });
 </script>
