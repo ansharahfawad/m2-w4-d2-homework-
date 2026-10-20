@@ -1,287 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
+  <head>
     <title>Food Blog</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
-    <style>
-        * {
-            font-family:Arial, Helvetica, sans-serif;
-        }
-        #leftside {
-            float:left;
-            width: 30%;
-            min-height: 1200px;
-            background-color:rgb(77, 192, 154);
-        }
-        #rightside {
-            float:left;
-            width: 70%;
-            min-height: 1200px;
-            background-color:rgb(238, 226, 192);
-            position:relative;
-        }
-        #container {
-            background-color:rgba(255, 255, 255, 0.85);
-            position: absolute;
-            top: 15%;
-            left: 15%;
-            min-width: 1100px;
-            min-height: 1050px;
-            border-radius: 0.7em;
-        }
-        header {
-            height: 50px;
-            background-color:rgba(231, 229, 229, 0.5);
-            font-size: 2.75em;
-            padding:0.5em;
-            color:rgb(216, 150, 7);
-        }
-        header span {
-            font-family: 'Sacramento', cursive;
-        }
-        main {
-            position: relative;
-        }
-        main h2 {
-            position: absolute;
-            left: 20%;
-            top: 30px;
-            margin: 25px 0 200px 50px;
-            color:rgb(60, 190, 160);
-            text-transform: uppercase;
-        }
-        main #photos img {
-            margin: 0.75em;
-            border: 0.85em solid rgb(255, 255, 255);
-        }
-        section#blogposts {
-            position: absolute;
-            left: 20%;
-            top: 70px;
-            padding: 50px;
-        }
-        main .post {
-            margin: 25px;
-            padding: 25px;
-            border: 2px solid rgba(83, 78, 58, 0.6);
-            border-radius: 0.5em;
-        }
-        footer {
-            position: absolute;
-            bottom: 0;
-            height: 50px;
-            width: 100%;
-            text-align: center;
-            font-size: 0.85em;
-        }
-    
-        .post-author {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <aside id="leftside" aria-hidden="true"></aside>
+    <aside id="rightside" aria-hidden="true"></aside>
 
-        .profile-image {
-            width: 42px;
-            height: 42px;
-            object-fit: cover;
-            cursor: pointer;
-            border: 1px solid #c7cbd0;
-            background: #e7eaed;
-            margin-right: 6px;
-        }
-
-        .profile-image:focus {
-            outline: 2px solid rgb(60, 190, 160);
-            outline-offset: 2px;
-        }
-
-        .profile-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.28);
-        }
-
-        .profile-card {
-            position: relative;
-            width: min(360px, 100%);
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 26px;
-            color: #fff;
-            background: rgba(20, 20, 20, 0.94);
-            border-radius: 10px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            overflow-wrap: anywhere;
-        }
-
-        .profile-card h3 {
-            margin: 0 28px 18px 0;
-            font-size: 1.4em;
-        }
-
-        .profile-card p {
-            margin: 12px 0;
-            line-height: 1.5;
-        }
-
-        .profile-close {
-            position: absolute;
-            top: 8px;
-            right: 10px;
-            padding: 4px 9px;
-            border: 0;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-</style>
-
-    
-
-</head>
-<body>
-    <aside id="leftside"></aside>
-    <aside id="rightside"></aside>
-    <div id="container">
-    <header>
+    <div id="container" class="container-fluid px-0 my-4">
+      <header
+        class="d-flex flex-wrap align-items-center justify-content-between"
+      >
         <food-blog-title></food-blog-title>
-    </header>
+        <food-blog-nav></food-blog-nav>
+      </header>
 
-    <main>
-        <aside id="photos">
-            <img src="images/chili.jpg" alt="White Chicken Chili" width="180">
+      <main class="row no-gutters">
+        <aside id="photos" class="col-12 col-md-3">
+          <img
+            :src="chiliImage"
+            alt="White Chicken Chili"
+            class="img-fluid chili-image"
+          />
         </aside>
 
-        <comments-heading></comments-heading>
-
-        <section id="blogposts">
+        <div class="col-12 col-md-9 p-4 content-column">
+          <comments-heading></comments-heading>
+          <section id="blogposts">
             <blog-post
-                v-for="post in posts"
-                :key="post.id"
-                :post="post"
-                :profile-placeholder="profilePlaceholder"
-                @show-author-info="showAuthorInfo">
+              v-for="post in posts"
+              :key="post.id"
+              :post="post"
+              :profile-placeholder="profilePlaceholder"
+              @show-author-info="showAuthorInfo"
+            >
             </blog-post>
-        </section>
+          </section>
+        </div>
+      </main>
 
-    </main>
-
-    <div
+      <div
         v-if="selectedAuthor"
         class="profile-overlay"
         @click.self="closeAuthorInfo"
-    >
-        <section class="profile-card" role="dialog" aria-modal="true" :aria-label="selectedAuthor.name + ' profile'">
-            <button class="profile-close" type="button" @click="closeAuthorInfo" aria-label="Close profile">×</button>
-            <h3>{{ selectedAuthor.name }}</h3>
-            <p><strong>Foodie Level:</strong> {{ selectedAuthor.foodieLevel }}</p>
-            <p><strong>Bio:</strong> {{ selectedAuthor.bio }}</p>
+      >
+        <section
+          class="profile-card"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="selectedAuthor.name + ' profile'"
+        >
+          <button
+            class="profile-close"
+            type="button"
+            @click="closeAuthorInfo"
+            aria-label="Close profile"
+          >
+            ×
+          </button>
+          <h3>{{ selectedAuthor.name }}</h3>
+          <p><strong>Foodie Level:</strong> {{ selectedAuthor.foodieLevel }}</p>
+          <p><strong>Bio:</strong> {{ selectedAuthor.bio }}</p>
         </section>
+      </div>
+
+      <footer>&copy; Copyright FOOD BLOG</footer>
     </div>
 
-    <footer>
-        &copy; Copyright FOOD BLOG
-    </footer>
-    
-</div>
-
-
-<script>
-    // Reusable component for the Food Blog title.
-    Vue.component('food-blog-title', {
-        template: '<span>Food Blog</span>'
-    });
-
-    // Reusable component for the comments section heading.
-    Vue.component('comments-heading', {
-        template: '<h2>Comments</h2>'
-    });
-
-    // Reuse this component for each comment.
-    Vue.component('blog-post', {
-        props: ['post', 'profilePlaceholder'],
-        template: `
-            <div class="post">
-                <div class="post-author">
-                    <img
-                        class="profile-image"
-                        :src="profilePlaceholder"
-                        :alt="'View profile for ' + post.author"
-                        @click="$emit('show-author-info', post.author)"
-                        @keydown.enter="$emit('show-author-info', post.author)"
-                        tabindex="0"
-                        title="Click to view author profile"
-                    >
-                    <span class="author">{{ post.author }}</span> —
-                    <span class="date">{{ post.date }}</span>
-                    <span class="reply">{{ post.reply }}</span>
-                </div>
-                <p>{{ post.comment }}</p>
-            </div>
-        `
-    });
-
-    // One Vue instance controls the page content.
-    new Vue({
-        el: '#container',
-        data: {
-            profilePlaceholder: 'images/profile-placeholder.png',
-            selectedAuthor: null,
-            authors: [{'name': 'Brianna', 'foodieLevel': 'Novice', 'bio': 'Food enthusiast. Love to cook and experiment. Into only organic, fat free, sugar free stuffs!'}, {'name': 'LINH', 'foodieLevel': 'Newcomer', 'bio': 'Love food! Grew up with meat and potatoes. Recently venture outside my comfort zone. Loving everything I have been eating so far. Thai is my favorite at this time.'}, {'name': 'CATHERINE LEONARDO', 'foodieLevel': 'Mentor', 'bio': 'I have to say I never was the adventurous type until 2 years ago. My boyfriend, who is of Japanese background, exposed me to other cultural food and I have never look back since!'}, {'name': 'KALI', 'foodieLevel': 'Novice', 'bio': "Food is my passion. So is cooking. I love to experiment and try new things. I have to admit I'm a food whore! Invite me over for dinner and I'll be there!"}],
-            posts: [
-                {
-                    id: 1,
-                    author: 'Brianna',
-                    date: 'February 18, 2021 @ 3:30 pm',
-                    reply: 'REPLY',
-                    comment: 'Was amazing! My Walmart didn’t have coriander in stock and didn’t have ground cumin. I used serrano instead of jalapeño. It was just like my favorite tortilla soup from BJs. I am sending this recipe to my family. I want everyone to try it!'
-                },
-                {
-                    id: 2,
-                    author: 'LINH',
-                    date: 'February 15, 2021 @ 9:46 am',
-                    reply: 'REPLY',
-                    comment: 'I just made this soup today and it’s so tasty! didn’t have corn at home but still turned out very good. It’s a winner! I made beef chili for my parents; but since my dad has gout he can’t eat beef; this white chicken chili is perfect for him. Thank you Lisa!'
-                },
-                {
-                    id: 3,
-                    author: 'CATHERINE LEONARDO',
-                    date: 'February 13, 2021 @ 12:58 pm',
-                    reply: 'REPLY',
-                    comment: 'I LOVE this White Chicken Chili! You are right, it is satiating meal—delicious with toasted bread. Refreshingly different taste than any chicken chili I’ve made in the past. I made it exactly as written and added some chopped zucchini, carrots, and celery. Instead of shredding the chicken, I chopped it into small pieces. It freezes very well. Will be an all-time favorite, for sure.'
-                },
-                {
-                    id: 4,
-                    author: 'KALI',
-                    date: 'February 13, 2021 @ 11:31 am',
-                    reply: 'REPLY',
-                    comment: 'This recipe is dynamite! My partner usually won’t eat beans but he finished the whole pot (darn was hoping to have some for leftovers haha). This is crowd-pleaser that I am going to add to my regular recipe rotation. Thanks so much, Lisa!'
-                }
-            ]
-        },
-        methods: {
-            showAuthorInfo(authorName) {
-                this.selectedAuthor = this.authors.find(
-                    author => author.name.toLowerCase() === authorName.toLowerCase()
-                ) || null;
-            },
-            closeAuthorInfo() {
-                this.selectedAuthor = null;
-            }
-        }
-    });
-</script>
-
-</body>
+    <script src="./js/app.js"></script>
+  </body>
 </html>
